@@ -38,6 +38,11 @@ module FastGettext
         end
         []
       end
+
+      def reload
+        chain.each(&:reload)
+        super
+      end
     end
   end
 end

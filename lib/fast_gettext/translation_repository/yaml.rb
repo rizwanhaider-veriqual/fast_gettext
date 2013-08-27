@@ -8,8 +8,8 @@ module FastGettext
     #  - provide access to translations in yaml files
     class Yaml < Base
       def initialize(name,options={})
-        find_and_store_files(options)
         super
+        reload
       end
 
       def available_locales
@@ -24,6 +24,11 @@ module FastGettext
 
       def pluralisation_rule
         self['pluralisation_rule'] ? lambda{|n| eval(self['pluralisation_rule']) } : nil
+      end
+
+      def reload
+        find_and_store_files(@options)
+        super
       end
 
       protected

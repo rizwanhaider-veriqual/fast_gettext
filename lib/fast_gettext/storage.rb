@@ -98,6 +98,11 @@ module FastGettext
       Thread.current[:fast_gettext_current_ext2] = cache
     end
 
+    def reload!
+      self.current_cache = {}
+      translation_repositories.values.each(&:reload)
+    end
+
     #global, since re-parsing whole folders takes too much time...
     @@translation_repositories={}
     def translation_repositories
@@ -181,15 +186,15 @@ module FastGettext
     end
     
     def locale=(new_locale)
-      new_locale = best_locale_in(new_locale)
-      self._locale = new_locale if new_locale
+      set_locale(new_locale)
     end
 
     # for chaining: puts set_locale('xx') == 'xx' ? 'applied' : 'rejected'
     # returns the current locale, not the one that was supplied
     # like locale=(), whoes behavior cannot be changed
     def set_locale(new_locale)
-      self.locale = new_locale
+      new_locale = best_locale_in(new_locale)
+      self._locale = new_locale
       locale
     end
 
@@ -268,7 +273,7 @@ module FastGettext
         self.current_ext1 = nil
       end
       
-      if ext2
+      if ext2 && ext2.to_s.length > 0
         #commented by rizwan. will see it later
         #version = 0
         #lang = TranslationLanguage.find_by_locale(ext2)

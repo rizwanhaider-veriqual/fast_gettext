@@ -6,8 +6,8 @@ module FastGettext
     #  - provide access to translations in mo files
     class Mo < Base
       def initialize(name,options={})
-        find_and_store_files(name,options)
         super
+        reload
       end
 
       def available_locales
@@ -16,6 +16,11 @@ module FastGettext
 
       def pluralisation_rule
         current_translations.pluralisation_rule
+      end
+
+      def reload
+        find_and_store_files(@name, @options)
+        super
       end
 
       protected

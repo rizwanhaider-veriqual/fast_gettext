@@ -3,6 +3,7 @@ class TranslationText < ActiveRecord::Base
   validates_presence_of :locale
   validates_uniqueness_of :locale, :scope=>:translation_key_id
   attr_accessible :text, :locale, :translation_key, :translation_key_id
+  xss_terminate :sanitize  => [:text]
   after_update :expire_cache
 
   protected

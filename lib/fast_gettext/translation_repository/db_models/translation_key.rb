@@ -1,14 +1,20 @@
 class TranslationKey < ActiveRecord::Base
   has_many :translations, :class_name => 'TranslationText', :dependent => :destroy
-
+  
+  xss_terminate :sanitize  => [:key]
+  
   accepts_nested_attributes_for :translations, :allow_destroy => true
 
   validates_uniqueness_of :key
   validates_presence_of :key
 
-  attr_accessible :key, :translations, :translations_attributes
+  attr_accessible :key, :translations, :translations_attributes,  :override, :front_end, :custom
 
   before_save :normalize_newlines
+
+  def to_label
+    self.key.to_s
+  end
 
   def self.translation(key, locale)
     # p "#{key} #{locale}"
@@ -40,7 +46,9 @@ class TranslationKey < ActiveRecord::Base
     translation_texts
     map = {}
     for text in translation_texts
-      map[text.translation_key.key] = text.text
+	  if text && text.translation_key
+        map[text.translation_key.key] = text.text
+      end
     end
     return map
   end

@@ -83,6 +83,7 @@ Do this once in every Thread. (e.g. Rails -> ApplicationController)
     _('not-found') == 'not-found'
     s_('Namespace|no-found') == 'not-found'
     n_('Axis','Axis',3) == 'Achsen' #German plural of Axis
+    _('Hello %{name}!') % {:name => "Pete"} == 'Hello Pete!'
 
 
 Managing translations
@@ -127,7 +128,8 @@ since it runs in a different thread then e.g. controllers, so set them inside yo
       def set_locale
         FastGettext.available_locales = ['de','en',...]
         FastGettext.text_domain = 'frontend'
-        session[:locale] = I18n.locale = FastGettext.set_locale(params[:locale] || session[:locale] || request.env['HTTP_ACCEPT_LANGUAGE'] || 'en')
+        FastGettext.set_locale(params[:locale] || session[:locale] || request.env['HTTP_ACCEPT_LANGUAGE'])
+        session[:locale] = I18n.locale = FastGettext.locale
       end
 
 
@@ -224,8 +226,10 @@ Mo/Po-file parsing from Masao Mutoh, see vendor/README
  - [Hoang Nghiem](https://github.com/hoangnghiem)
  - [Costa Shapiro](https://github.com/costa)
  - [Jamie Dyer](https://github.com/kernow)
+ - [Stephan Kulow](https://github.com/coolo)
+ - [Fotos Georgiadis](https://github.com/fotos)
 
 [Michael Grosser](http://grosser.it)<br/>
 michael@grosser.it<br/>
-License: MIT<br/>
-[![Build Status](https://secure.travis-ci.org/grosser/fast_gettext.png)](http://travis-ci.org/grosser/fast_gettext)
+License: MIT, some vendor parts under the same license terms as Ruby (see headers)<br/>
+[![Build Status](https://travis-ci.org/grosser/fast_gettext.png)](https://travis-ci.org/grosser/fast_gettext)
